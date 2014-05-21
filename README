@@ -1,0 +1,42 @@
+serpent-mode.el
+===============
+
+By Rob Myers <rob@robyers.org>
+
+Emacs support for editing Serpent code.
+
+
+Installation
+============
+
+Major Mode
+----------
+
+To install the Emacs major mode, add the file serpent-mode.el to your Emacs
+load path. You can then load it by typing the following in Emacs:
+
+ M-x serpent-mode
+
+Alternatively you can have Emacs load it automatically for files with a .moo
+extension by adding the following to your .emacs file:
+ 
+(require 'serpent-mode)
+(add-to-list 'auto-mode-alist '("\\.se$" . serpent-mode))
+
+Autocomplete
+------------
+
+To install the autocomplete dictionary, copy the file ``serpent-mode'' to the
+autocomplete directory in your autoload dictionary directory. e.g.:
+
+cp serpent-mode ~/.emacs.d/ac-dict
+
+Then rebuild the autocomplete cache by typing the following in Emacs:
+
+M-x ac-clear-dictionary-cache
+
+Other Files
+-----------
+
+You don't need to install dev-serpent-mode.el, it just contains code used in
+making the regular expressions used by serpent-mode.el .
