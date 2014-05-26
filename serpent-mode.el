@@ -247,6 +247,37 @@ the lines in which START and END lie."
   (serpent-buffer-file-command "compile"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Splitting strings into 32 character runs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun substrings32 (source)
+  "Break source up into a list of substrings, each at most 32 characters long."
+  (let ((string-length (length string))
+	(string-pos 0)
+	(substrings '()))
+    (while (< string-pos string-length)
+      (setf substrings (cons (substring-no-properties source
+						      string-pos
+						      (min (+ string-pos 32)
+							   string-length))
+			     substrings)))
+    (reverse substrings)))
+
+(defun substring32format (substrings)
+  (concat "["
+	  (mapconcat 'identity substrings "\", \"")
+	  "]"))
+
+(defun stripsubstring32format (source)
+  ;; Strip start of list, if any
+  (replace-regexp-in-string "^\\s-*[\\s-*" ""
+     ;; Strip end of list, if any
+     (replace-regexp-in-string "^\\s-*]\\s-*" ""
+	;; Strip string separators, if any (and not quoted)
+	(replace-regexp-in-string "[^\\]*\"[^\\]*,\\s-*[^\\]*\"" "" source))))
+
+     
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Syntax table
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -275,7 +306,7 @@ the lines in which START and END lie."
 (define-key serpent-mode-map (kbd "<backtab>") 'serpent-indent-dedent-line)
 (define-key serpent-mode-map "\C-c<" 'serpent-indent-shift-left)
 (define-key serpent-mode-map "\C-c>" 'serpent-indent-shift-right)
-(define-key serpent-mode-map ":" 'serpent-indent-electric-colon)
+;;(define-key serpent-mode-map ":" 'serpent-indent-electric-colon)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define the mode
