@@ -302,7 +302,7 @@ the lines in which START and END lie."
 (define-key serpent-mode-map (kbd "C-x C-a") 'serpent-compile-to-assembly-current-buffer)
 (define-key serpent-mode-map (kbd "C-x C-e") 'serpent-compile-current-buffer)
 ;; Indent specific
-(define-key serpent-mode-map "\177" 'serpent-indent-dedent-line-backspace)
+;;(define-key serpent-mode-map "\177" 'serpent-indent-dedent-line-backspace)
 (define-key serpent-mode-map (kbd "<backtab>") 'serpent-indent-dedent-line)
 (define-key serpent-mode-map "\C-c<" 'serpent-indent-shift-left)
 (define-key serpent-mode-map "\C-c>" 'serpent-indent-shift-right)
