@@ -34,7 +34,7 @@
 (defconst serpent-font-lock-keywords
   '(
     ;; Keywords
-    ("\\<\\(?:code\\|else\\|i\\(?:f\\|nit\\)\\|return\\|s\\(?:top\\|uicide\\)\\|while\\)\\>"
+    ("\\<\\(?:code\\|el\\(?:if\\|se\\)\\|i\\(?:f\\|nit\\)\\|return\\|s\\(?:top\\|uicide\\)\\|while\\)\\>"
      . font-lock-keyword-face)
     ;; Built-in variables
     ("\\<\\(?:block\\.\\(?:coinbase\\|difficulty\\|gaslimit\\|number\\|prevhash\\|timestamp\\)\\|contract\\.\\(?:\\(?:balanc\\|storag\\)e\\)\\|msg\\.\\(?:data\\(?:size\\)?\\|sender\\|value\\)\\|tx\\.\\(?:gas\\(?:price\\)?\\|origin\\)\\)\\>"
@@ -95,7 +95,7 @@
     (save-excursion
       (beginning-of-line)
       ;; Don't indent for else
-      (when (not (looking-at "\\s-*\\(init\\|code\\|else\\)"))
+      (when (not (looking-at "\\s-*\\(init\\|code\\|elif\\|else\\)"))
         (incf indent serpent-indent-offset)))
     indent))
 

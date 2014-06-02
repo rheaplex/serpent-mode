@@ -22,7 +22,7 @@
 ;; keywords
 
 (concat "\\<"
-	(regexp-opt '("code" "else" "if" "init" "return" "stop" "suicide" "while"))
+	(regexp-opt '("code" "else" "elif" "if" "init" "return" "stop" "suicide" "while"))
 	"\\>")
 
 ;; Variables
