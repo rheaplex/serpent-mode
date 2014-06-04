@@ -94,9 +94,11 @@
                                     (re-search-forward "[^[:space:]]" (line-end-position)))))
     (save-excursion
       (beginning-of-line)
-      ;; Don't indent for else
-      (when (not (looking-at "\\s-*\\(init\\|code\\|elif\\|else\\)"))
-        (incf indent serpent-indent-offset)))
+      (when (not (looking-at "\\s-*\\<\\(init\\|code\\|elif\\|else\\)\\>"))
+        (incf indent serpent-indent-offset))
+      ;; Force init: and code: to the left
+      (when (looking-at "\\s-*\\<\\(init\\|code\\)\\>")
+        (setf indent 0)))
     indent))
 
 (defun serpent-indent-calculate-levels ()
@@ -156,13 +158,13 @@ See `serpent-indent-line' for details."
 (defun serpent-indent-dedent-line ()
   "De-indent current line."
   (interactive "*")
-  ;;(when (and (not (serpent-syntax-comment-or-string-p))
-  ;;           (<= (point-marker) (save-excursion
-  ;;                                (back-to-indentation)
-  ;;                                (point-marker)))
-  ;;           (> (current-column) 0))
+  (when (and ;;(not (serpent-syntax-comment-or-string-p))
+             (<= (point-marker) (save-excursion
+                                  (back-to-indentation)
+                                  (point-marker)))
+             (> (current-column) 0))
     (serpent-indent-line t)
-    t);;)
+    t))
 
 (defun serpent-indent-dedent-line-backspace (arg)
   "De-indent current line.
@@ -302,11 +304,12 @@ the lines in which START and END lie."
 (define-key serpent-mode-map (kbd "C-x C-a") 'serpent-compile-to-assembly-current-buffer)
 (define-key serpent-mode-map (kbd "C-x C-e") 'serpent-compile-current-buffer)
 ;; Indent specific
-;;(define-key serpent-mode-map "\177" 'serpent-indent-dedent-line-backspace)
+(define-key serpent-mode-map "\177" 'serpent-indent-dedent-line-backspace)
 (define-key serpent-mode-map (kbd "<backtab>") 'serpent-indent-dedent-line)
 (define-key serpent-mode-map "\C-c<" 'serpent-indent-shift-left)
 (define-key serpent-mode-map "\C-c>" 'serpent-indent-shift-right)
 ;;(define-key serpent-mode-map ":" 'serpent-indent-electric-colon)
+(define-key serpent-mode-map "\C-j" 'newline-and-indent)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Define the mode
