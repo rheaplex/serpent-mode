@@ -17,7 +17,7 @@ load path. You can then load it by typing the following in Emacs:
 
  M-x serpent-mode
 
-Alternatively you can have Emacs load it automatically for files with a .moo
+Alternatively you can have Emacs load it automatically for files with a .se
 extension by adding the following to your .emacs file:
  
 (require 'serpent-mode)

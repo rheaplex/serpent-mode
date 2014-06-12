@@ -13,7 +13,7 @@
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
-;; 
+;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -23,7 +23,7 @@
 ;; You can then load it using M-x serpent-mode
 ;; Alternatively you can have Emacs load it automatically for files with
 ;; a .strike extension by adding the following to your .emacs file:
-;; 
+;;
 ;;    (require 'serpent-mode)
 ;;    (add-to-list 'auto-mode-alist '("\\.se$" . serpent-mode))
 
@@ -67,12 +67,13 @@
 (defvar serpent-indent-levels '(0)
   "Levels of indentation available for `serpent-indent-line-function'.")
 
-(defconst serpent-block-start "^\\s-*\\(init\\|code\\|if\\|while\\)"
-  "A regex to match the starts of blocks for serpent-indent-calculate-indentation")
+(defconst serpent-block-start
+  "^\\s-*\\(code\\|elif\\|else\\|if\\|init\\|while\\)\\>"
+  "A regex to match starts of blocks for serpent-indent-calculate-indentation")
 
 ;; FIXME: de-indent after functions that end execution
 ;;(defconst serpent-block-start "^\\s-*\\(return\\|stop\\|suicide\\)"
-;;  "A regex to match the ends of blocks for serpent-indent-calculate-indentation")
+;;  "A regex to match ends of blocks for serpent-indent-calculate-indentation")
 
 (defun serpent-indent-calculate-indentation ()
   "Calculate correct indentation offset for the current line."
@@ -80,25 +81,30 @@
   (let ((indent 0))
     (save-excursion
       (beginning-of-line)
-      ;; On a block start line? Don't use its indentation
-      (when (and (looking-at serpent-block-start)
-                 (not (bobp)))
-        (forward-line -1))
-      ;; Scan back looking for the start of the block
-      (while (and (not (looking-at serpent-block-start))
-                  (not (bobp)))
-        (forward-line -1))
-        ;; search-forward updates point, so save excursion
-        (setf indent (count-matches "\\s-"
-                                    (line-beginning-position)
-                                    (re-search-forward "[^[:space:]]" (line-end-position)))))
-    (save-excursion
-      (beginning-of-line)
-      (when (not (looking-at "\\s-*\\<\\(init\\|code\\|elif\\|else\\)\\>"))
-        (incf indent serpent-indent-offset))
-      ;; Force init: and code: to the left
-      (when (looking-at "\\s-*\\<\\(init\\|code\\)\\>")
-        (setf indent 0)))
+      ;; At start of buffer? No previous line, so indent is zero
+      (unless (bobp)
+        ;; Force init:/code: to the left
+        (if (looking-at "^\\s-*\\(init\\|code\\)\\>")
+            (setf indent 0)
+          ;; Otherwise...
+          (progn
+            ;; Dedent else:/elif:
+            (when (looking-at "\\s-*\\(elif\\|else\\)\\>")
+              (print "else")
+              (decf indent serpent-indent-offset)
+              (print indent))
+            ;; Then use the indentation of the previous line
+            (forward-line -1)
+            ;; search-forward updates point, so save excursion again
+            (save-excursion
+              (incf indent
+                    (count-matches "\\s-"
+                                   (line-beginning-position)
+                                   (re-search-forward "[^[:space:]]"
+                                                      (line-end-position)))))
+            (when (looking-at serpent-block-start)
+              (incf indent serpent-indent-offset))))))
+    (print indent)
     indent))
 
 (defun serpent-indent-calculate-levels ()
